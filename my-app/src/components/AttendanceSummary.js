@@ -1,135 +1,150 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { FiCalendar, FiClock } from 'react-icons/fi';
 
-const AttendanceSummary = ({ userId }) => {
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState('week');
+const AttendanceSummary = ({ userLeaves = [] }) => {
+  // Format date to display in a readable format
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
-  useEffect(() => {
-    const fetchAttendance = async () => {
-      try {
-        setLoading(true);
-        // In a real application, make an API call here
-        // This is mock data
-        const mockData = [
-          { date: '2025-04-21', checkin: '09:05', checkout: '17:30', hours: 8.42 },
-          { date: '2025-04-22', checkin: '08:58', checkout: '17:45', hours: 8.78 },
-          { date: '2025-04-23', checkin: '09:10', checkout: '18:00', hours: 8.83 },
-          { date: '2025-04-24', checkin: '08:50', checkout: '17:20', hours: 8.50 },
-          { date: '2025-04-25', checkin: '09:00', checkout: '17:30', hours: 8.50 },
-          { date: '2025-04-26', checkin: '09:15', checkout: '', hours: 0 },
-        ];
-        setAttendanceData(mockData);
-      } catch (error) {
-        console.error('Error fetching attendance data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Calculate the number of days between two dates
+  const calculateDays = (fromDate, toDate) => {
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+    const diffTime = Math.abs(to - from);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both start and end days
+    return diffDays;
+  };
 
-    fetchAttendance();
-  }, [userId, timeframe]);
-
-  if (loading) {
-    return <div className="loading-spinner-small"></div>;
-  }
-
-  const totalHours = attendanceData.reduce((sum, day) => sum + day.hours, 0);
-  const avgHours = attendanceData.length ? (totalHours / attendanceData.length).toFixed(2) : 0;
+  // Get status color based on leave status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'APPROVED':
+        return 'var(--success)';
+      case 'REJECTED':
+        return 'var(--danger)';
+      default:
+        return 'var(--warning)';
+    }
+  };
 
   return (
-    <section className="attendance-summary">
-      <div className="section-header">
-        <h2>Attendance Summary</h2>
-        <div className="timeframe-selector">
-          <button 
-            className={timeframe === 'week' ? 'active' : ''} 
-            onClick={() => setTimeframe('week')}
-          >
-            Week
-          </button>
-          <button 
-            className={timeframe === 'month' ? 'active' : ''} 
-            onClick={() => setTimeframe('month')}
-          >
-            Month
-          </button>
+    <div>
+      <section className="welcome-section" style={{ marginBottom: '1rem', padding: '1rem', borderRadius: 'var(--border-radius-lg)', boxShadow: 'none', background: 'transparent' }}>
+        <div className="welcome-text">
+          <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem', fontWeight: 700, color: 'black' }}>Attendance Overview</h1>
+          <p style={{ fontSize: '0.9rem' }}>Monitor your attendance and leave history</p>
+        </div>
+      </section>
+
+      {/* Leave Statistics */}
+      <div style={{ 
+        marginBottom: '1.5rem', 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+        gap: '1rem' 
+      }}>
+        <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--border-radius-md)', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>
+            <FiCalendar size={18} />
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Casual Leave</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 600, marginTop: '0.25rem' }}>12 days</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Balance: 8 days</div>
+        </div>
+        
+        <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--border-radius-md)', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>
+            <FiCalendar size={18} />
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Sick Leave</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 600, marginTop: '0.25rem' }}>7 days</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Balance: 5 days</div>
+        </div>
+        
+        <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--border-radius-md)', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>
+            <FiClock size={18} />
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Earned Leave</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 600, marginTop: '0.25rem' }}>15 days</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Balance: 15 days</div>
         </div>
       </div>
-      
-      <div className="attendance-overview">
-        <div className="attendance-stats">
-          <div className="attendance-stat-item">
-            <span className="stat-label">Total Hours</span>
-            <span className="stat-value">{totalHours.toFixed(2)}</span>
-          </div>
-          <div className="attendance-stat-item">
-            <span className="stat-label">Avg. Hours/Day</span>
-            <span className="stat-value">{avgHours}</span>
-          </div>
-          <div className="attendance-stat-item">
-            <span className="stat-label">On Time Rate</span>
-            <span className="stat-value">92%</span>
-          </div>
-        </div>
-      </div>
-      
-      <div className="attendance-table-container">
-        <table className="attendance-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Check In</th>
-              <th>Check Out</th>
-              <th>Hours</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {attendanceData.map((day, index) => (
-              <tr key={index}>
-                <td>{new Date(day.date).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}</td>
-                <td>{day.checkin}</td>
-                <td>{day.checkout || '-'}</td>
-                <td>{day.hours.toFixed(2)}</td>
-                <td>
-                  <span className={`status-badge ${getStatusClass(day)}`}>
-                    {getStatus(day)}
-                  </span>
-                </td>
-              </tr>
+
+      {/* Leave Applications History */}
+      <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--border-radius-md)', boxShadow: 'var(--shadow-sm)', marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>Leave Applications</h2>
+        
+        {userLeaves.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {userLeaves.map((leave) => (
+              <div key={leave.id} style={{ 
+                border: '1px solid var(--bg-lighter)',
+                borderRadius: 'var(--border-radius-sm)',
+                padding: '0.75rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div>
+                  <div style={{ fontWeight: 500 }}>{leave.leaveType} Leave</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                    {formatDate(leave.fromDate)} - {formatDate(leave.toDate)}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.1rem' }}>
+                    {calculateDays(leave.fromDate, leave.toDate)} day(s)
+                  </div>
+                  {leave.reason && (
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                      <strong>Reason:</strong> {leave.reason}
+                    </div>
+                  )}
+                </div>
+                <div style={{ 
+                  padding: '0.3rem 0.75rem',
+                  background: 'var(--bg-light)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  fontSize: '0.8rem',
+                  fontWeight: 500,
+                  color: getStatusColor(leave.status)
+                }}>
+                  {leave.status}
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--text-secondary)' }}>
+            No leave applications found
+          </div>
+        )}
       </div>
-      
-      <div className="view-all-link">
-        <a href="/attendance">View Complete Attendance History</a>
+
+      {/* Attendance Statistics */}
+      <div style={{ background: 'white', padding: '1rem', borderRadius: 'var(--border-radius-md)', boxShadow: 'var(--shadow-sm)' }}>
+        <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--text-primary)' }}>This Month's Attendance</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: 600, color: 'var(--primary)' }}>21</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Present Days</div>
+          </div>
+          
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: 600, color: 'var(--warning)' }}>2</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Absent Days</div>
+          </div>
+          
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: 600, color: 'var(--success)' }}>91%</div>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Attendance Rate</div>
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
-
-// Helper functions
-function getStatus(day) {
-  const today = new Date().toISOString().split('T')[0];
-  
-  if (day.date === today && !day.checkout) return 'Active';
-  if (!day.checkout) return 'Incomplete';
-  if (day.hours >= 8) return 'Complete';
-  if (day.hours < 8) return 'Partial';
-  return 'Unknown';
-}
-
-function getStatusClass(day) {
-  const status = getStatus(day);
-  switch (status) {
-    case 'Active': return 'status-active';
-    case 'Complete': return 'status-complete';
-    case 'Partial': return 'status-partial';
-    case 'Incomplete': return 'status-incomplete';
-    default: return '';
-  }
-}
 
 export default AttendanceSummary;

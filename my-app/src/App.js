@@ -6,8 +6,13 @@ import Dashboard from './components/Dashboard';
 import Leave from './components/Leave';
 import ProtectedRoute from './components/ProtectedRoute';
 import Attendance from './components/Attendance';
+import Profile from './components/Profile';
 import './App.css';
-
+import Tasks from './components/Tasks';
+import Calendar from './components/Calendar';
+import Documents from './components/Documents';
+import EnhancedNotifications from './components/EnhancedNotifications';
+  
 function App() {
   return (
     <Router>
@@ -17,6 +22,11 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/leave" element={<Leave />} />
         <Route path="/attendance" element={<Attendance />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/documents" element={<Documents />} />
+        <Route path="/enhancednotifications" element={<EnhancedNotifications />} />
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </Router>

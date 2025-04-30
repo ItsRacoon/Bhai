@@ -201,19 +201,29 @@ const Dashboard = () => {
               </Link>
             </li>
             <li>
-              <span className="menu-icon">📝</span> Tasks
+              <Link to="/tasks" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <span className="menu-icon">📝</span> Tasks
+              </Link>
             </li>
             <li>
-              <span className="menu-icon">🗓️</span> Calendar
+              <Link to="/calendar" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <span className="menu-icon">🗓️</span> Calendar
+              </Link>
             </li>
             <li>
-              <span className="menu-icon">📑</span> Documents
+              <Link to="/documents" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <span className="menu-icon">📑</span> Documents
+              </Link>
             </li>
             <li>
-              <span className="menu-icon">🔔</span> Notifications
+              <Link to="/enhancednotifications" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <span className="menu-icon">🔔</span> Notifications
+              </Link>
             </li>
             <li>
-              <span className="menu-icon">⚙️</span> Settings
+              <Link to="/settings" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                <span className="menu-icon">⚙️</span> Settings
+              </Link>
             </li>
           </ul>
         </nav>
@@ -253,8 +263,8 @@ const Dashboard = () => {
             </div>
             
             <div className="user-info">
-              <span>{user.name || 'User'}</span>
-              <span className="role-badge">{user.role || 'Employee'}</span>
+            <span>{user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}</span>
+            <span className="role-badge">{user.position || 'Employee'}</span>
             </div>
             
             <img 
@@ -268,7 +278,7 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <section className="welcome-section">
           <div className="welcome-text">
-            <h1>Welcome back, {user.name || 'User'}!</h1>
+          <h1>Welcome back, {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}!</h1>
             <p>Let's make today productive and amazing.</p>
           </div>
           
@@ -359,8 +369,8 @@ const Dashboard = () => {
           </div>
           
           <div className="profile-details" style={{ textAlign: 'center' }}>
-            <h3>{user.name || 'User'}</h3>
-            <p>{user.role || 'Employee'}</p>
+          <h3>{user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}</h3>
+          <p>{user.position || 'Employee'}</p>
             <p>{user.email || 'user@example.com'}</p>
             <p>ID: {user.employeeId || 'EMP001'}</p>
           </div>
