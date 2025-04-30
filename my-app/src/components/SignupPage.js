@@ -11,7 +11,7 @@ const SignupPage = () => {
         email: '',
         password: '',
         retypePassword: '',
-        position: 'UI Designer'
+        position: 'Admin'
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -105,8 +105,15 @@ const SignupPage = () => {
                 position: data.position
             }));
 
-            // Redirect to dashboard
-            navigate('/dashboard');
+            // Redirect based on role
+if (data.position === 'Admin') {
+    navigate('/admindash');
+} else if (data.position === 'Staff') {
+    navigate('/dashboard');
+} else {
+    navigate('/');
+}
+
         } catch (err) {
             console.error('Registration error details:', {
                 message: err.message,
@@ -188,8 +195,8 @@ const SignupPage = () => {
                                     <input
                                         type="radio"
                                         name="position"
-                                        value="UI Designer"
-                                        checked={formData.position === 'UI Designer'}
+                                        value="Admin"
+                                        checked={formData.position === 'Admin'}
                                         onChange={handleChange}
                                     />
                                     Admin
@@ -198,8 +205,8 @@ const SignupPage = () => {
                                     <input
                                         type="radio"
                                         name="position"
-                                        value="UX Designer"
-                                        checked={formData.position === 'UX Designer'}
+                                        value="Staff"
+                                        checked={formData.position === 'Staff'}
                                         onChange={handleChange}
                                     />
                                     Staff

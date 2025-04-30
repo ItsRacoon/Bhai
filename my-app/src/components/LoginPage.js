@@ -51,8 +51,15 @@ const LoginPage = () => {
         position: data.position
       }));
 
-      // Navigate to the dashboard
-      navigate('/dashboard');
+      // Redirect based on role
+if (data.position === 'Admin') {
+  navigate('/admindash');
+} else if (data.position === 'Staff') {
+  navigate('/dashboard');
+} else {
+  navigate('/');
+}
+
     } catch (err) {
       setError('Connection error. Please try again later.');
     }
