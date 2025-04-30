@@ -6,6 +6,8 @@ import AttendanceSummary from './AttendanceSummary';
 import AnnouncementsList from './AnnouncementsList';
 import QuickActions from './QuickActions';
 import MobileMenu from './MobileMenu';
+import profile from './Profile';
+import enhancedNotifications from './EnhancedNotifications';
 
 // Rest of your component remains the same
 
@@ -216,7 +218,7 @@ const Dashboard = () => {
               </Link>
             </li>
             <li>
-              <Link to="/enhancednotifications" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+              <Link to="/notifications" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
                 <span className="menu-icon">🔔</span> Notifications
               </Link>
             </li>
@@ -257,17 +259,18 @@ const Dashboard = () => {
           </div>
           
           <div className="user-profile">
-            <div className="notification-bell">
-              <span className="notification-icon">🔔</span>
-              <span className="notification-badge">3</span>
-            </div>
-            
+            <Link to="/enhancednotifications" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="notification-bell">
+                <span className="notification-icon">🔔</span>
+                <span className="notification-badge">3</span>
+              </div>
+            </Link>
             <div className="user-info">
-            <span>{user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}</span>
-            <span className="role-badge">{user.position || 'Employee'}</span>
+              <span>{user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}</span>
+              <span className="role-badge">{user.position || 'Employee'}</span>
             </div>
-            
             <img 
+              onClick={() => navigate('/profile')}
               src={user.avatar || defaultAvatar} 
               alt="User avatar" 
               className="avatar" 
@@ -375,7 +378,12 @@ const Dashboard = () => {
             <p>ID: {user.employeeId || 'EMP001'}</p>
           </div>
           
-          <button className="view-profile-btn">View Full Profile</button>
+          <button
+            className="view-profile-btn"
+            onClick={() => navigate('/profile')}
+          >
+            View Full Profile
+          </button>
         </div>
 
         {/* Upcoming Events */}

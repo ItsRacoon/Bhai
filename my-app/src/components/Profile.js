@@ -9,13 +9,15 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     department: '',
     position: '',
     address: '',
     bio: '',
+    employeeId: '',
     avatar: null
   });
   const [previewImage, setPreviewImage] = useState(null);
@@ -34,7 +36,8 @@ const Profile = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:8080/api/profile', {
+        // Updated endpoint to match the backend
+        const response = await fetch('http://localhost:8080/api/user/profile', {
           headers: {
             'Authorization': `Bearer ${token}`,
           }
@@ -47,13 +50,15 @@ const Profile = () => {
         const data = await response.json();
         setUser(data);
         setFormData({
-          name: data.name || '',
+          firstName: data.firstName || '',
+          lastName: data.lastName || '',
           email: data.email || '',
           phone: data.phone || '',
           department: data.department || '',
           position: data.position || '',
           address: data.address || '',
           bio: data.bio || '',
+          employeeId: data.employeeId || '',
           avatar: null
         });
         setPreviewImage(data.avatar || defaultAvatar);
@@ -123,12 +128,14 @@ const Profile = () => {
       Object.keys(formData).forEach(key => {
         if (key === 'avatar' && formData[key] instanceof File) {
           formDataToSend.append('avatar', formData[key]);
-        } else if (formData[key] !== null && formData[key] !== undefined) {
+        } else if (formData[key] !== null && formData[key] !== undefined && key !== 'email') {
+          // Skip email as it shouldn't be updated
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      const response = await fetch('http://localhost:8080/api/profile', {
+      // Updated endpoint to match the backend
+      const response = await fetch('http://localhost:8080/api/user/profile', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -148,13 +155,15 @@ const Profile = () => {
 
       // Update form data with new values
       setFormData({
-        name: updatedData.name || '',
+        firstName: updatedData.firstName || '',
+        lastName: updatedData.lastName || '',
         email: updatedData.email || '',
         phone: updatedData.phone || '',
         department: updatedData.department || '',
         position: updatedData.position || '',
         address: updatedData.address || '',
         bio: updatedData.bio || '',
+        employeeId: updatedData.employeeId || '',
         avatar: null
       });
       
@@ -173,13 +182,15 @@ const Profile = () => {
     // Reset form data to current user data
     if (user) {
       setFormData({
-        name: user.name || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
         email: user.email || '',
         phone: user.phone || '',
         department: user.department || '',
         position: user.position || '',
         address: user.address || '',
         bio: user.bio || '',
+        employeeId: user.employeeId || '',
         avatar: null
       });
       setPreviewImage(user.avatar || defaultAvatar);
@@ -236,19 +247,38 @@ const Profile = () => {
               </div>
             )}
           </div>
+          {!isEditing && (
+            <div className="employee-id">
+              <span>Employee ID: {formData.employeeId || 'Not assigned'}</span>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              placeholder="Your full name"
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label>First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                placeholder="Your first name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                placeholder="Your last name"
+              />
+            </div>
           </div>
 
           <div className="form-group">
@@ -258,7 +288,7 @@ const Profile = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              disabled={!isEditing}
+              disabled={true} // Email should not be editable
               placeholder="Your email address"
             />
           </div>
@@ -275,29 +305,45 @@ const Profile = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Department</label>
-            <input
-              type="text"
-              name="department"
-              value={formData.department}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              placeholder="Your department"
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label>Department</label>
+              <input
+                type="text"
+                name="department"
+                value={formData.department}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                placeholder="Your department"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Position</label>
+              <input
+                type="text"
+                name="position"
+                value={formData.position}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                placeholder="Your job position"
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Position</label>
-            <input
-              type="text"
-              name="position"
-              value={formData.position}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              placeholder="Your job position"
-            />
-          </div>
+          {isEditing && (
+            <div className="form-group">
+              <label>Employee ID</label>
+              <input
+                type="text"
+                name="employeeId"
+                value={formData.employeeId}
+                onChange={handleInputChange}
+                disabled={true} // Usually, employee ID shouldn't be editable
+                placeholder="Your employee ID"
+              />
+            </div>
+          )}
 
           <div className="form-group address">
             <label>Address</label>
